@@ -26,12 +26,29 @@ def _gate(name: str, passed: bool, detail=None) -> dict:
 
 
 # --------------------------------------------------------------------------- #
+_TRACKING = re.compile(r"^(utm_|fbclid$|gclid$)")
+
+
+def _norm_url(u: str) -> str:
+    """Lower-case scheme and host, drop www., fragment, tracking params, trailing slash."""
+    from urllib.parse import urlsplit, parse_qsl, urlencode
+    parts = urlsplit(u.strip())
+    host = parts.netloc.lower().removeprefix("www.")
+    query = urlencode([(k, v) for k, v in parse_qsl(parts.query) if not _TRACKING.match(k)])
+    path = parts.path.rstrip("/")
+    return f"{host}{path}" + (f"?{query}" if query else "")
+
+
 def citations_grounded(text: str, grounding: list[dict], pubmed_lookup=None,
                        drug_names: tuple[str, ...] = ()) -> dict:
     urls = [g["url"] for g in grounding] + [g["resolved_url"] for g in grounding
                                             if g.get("resolved_url")]
     blob = " ".join(urls).lower()
     g_pmids = set(PUBMED_URL_RE.findall(" ".join(urls)))
+    g_norm = {_norm_url(x) for x in urls}
+
+    def in_blob(ident: str) -> bool:               # whole identifier, not a prefix
+        return re.search(rf"(?<![\w.]){re.escape(ident.lower())}(?![\w])", blob) is not None
     ids = cited_ids(text)
     rows = []
     for p in ids["pmids"]:
@@ -48,13 +65,13 @@ def citations_grounded(text: str, grounding: list[dict], pubmed_lookup=None,
             rows.append({"id": f"PMID:{p}", "status": st,
                          "pubmed_title": (info or {}).get("title")})
     for d in ids["dois"]:
-        rows.append({"id": f"doi:{d}", "status": "grounded" if d.lower() in blob else "unverified"})
+        rows.append({"id": f"doi:{d}", "status": "grounded" if in_blob(d) else "unverified"})
     for c in ids.get("pmcids", []):
-        rows.append({"id": c, "status": "grounded" if c.lower() in blob else "unverified"})
+        rows.append({"id": c, "status": "grounded" if in_blob(c) else "unverified"})
     for u in ids["urls"]:
         if PUBMED_URL_RE.search(u) or re.search(r"ncbi\.nlm\.nih\.gov/pmc/articles/(PMC\d+)", u, re.I):
             continue                                # counted as PMID or PMCID above
-        ok = any(u.rstrip("/") == x.rstrip("/") or x.startswith(u.rstrip("/")) for x in urls)
+        ok = _norm_url(u) in g_norm                 # exact match after normalising
         rows.append({"id": u, "status": "grounded" if ok else "unverified"})
     bad = [r for r in rows if r["status"] != "grounded"]
     return _gate("citations_grounded", not bad,
@@ -133,7 +150,17 @@ def synthetic_labelled(text: str) -> dict:
     return _gate("synthetic_labelled", ok, {"mentions_simulation": mentions})
 
 
-_NUM = re.compile(r"(?<![\w.])-?\d+\.\d+(?![\d])")
+# Numbers in model text that must come from tool output: every decimal, every
+# percentage, and every integer >= 10 (small integers such as "top 5" or
+# "3 pairs" are counts in prose). "95%" is allowed only as the interval label.
+_NUM = re.compile(r"(?<![\w.])-?\d+(?:\.\d+)?%?(?![\w.]\d)")
+
+
+def _forms(x: float) -> set[str]:
+    out = {f"{x:g}", f"{x:.1f}", f"{x:.2f}"}
+    if float(x).is_integer():
+        out.add(str(int(x)))
+    return out
 
 
 def numbers_from_tools(summary: str, tool_results: list[dict]) -> dict:
@@ -143,8 +170,9 @@ def numbers_from_tools(summary: str, tool_results: list[dict]) -> dict:
         if isinstance(x, bool):
             return
         if isinstance(x, (int, float)):
-            allowed.add(f"{float(x):.1f}"); allowed.add(f"{float(x):.2f}")
-            allowed.add(f"{float(x):g}")
+            allowed.update(_forms(float(x)))
+            if 0 <= x <= 1:                        # a fraction may be written as a percentage
+                allowed.update(f"{v}%" for v in _forms(round(x * 100, 4)))
         elif isinstance(x, dict):
             for v in x.values():
                 walk(v)
@@ -152,10 +180,18 @@ def numbers_from_tools(summary: str, tool_results: list[dict]) -> dict:
             for v in x:
                 walk(v)
     walk([r["result"] for r in tool_results])
-    for s in ("0.89", "0.34", "0.06", "0.04", "0.03"):   # tier precisions in API/README
-        allowed.add(s)
-    found = _NUM.findall(summary)
-    stray = [n for n in found if n not in allowed]
+
+    found, stray = [], []
+    for n in _NUM.findall(summary):
+        is_pct, core = n.endswith("%"), n.rstrip("%")
+        is_dec = "." in core
+        if not (is_pct or is_dec or abs(int(core)) >= 10):
+            continue                               # small count in prose
+        if is_pct and core == "95" and re.search(r"95%\s*(?:CI|confidence|interval)", summary, re.I):
+            continue                               # interval label, not a result
+        found.append(n)
+        if n not in allowed and not (not is_pct and core in allowed):
+            stray.append(n)
     return _gate("numbers_from_tools", not stray, {"numbers": found, "not_in_tool_output": stray})
 
 

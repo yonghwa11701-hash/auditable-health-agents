@@ -21,8 +21,9 @@ CHECKER_MODEL = _env("LUNGPAIR_CHECKER_MODEL", "gemini-3.5-flash-lite")
 # Used once if a primary model call raises (404 / 503 / overloaded).
 FALLBACK_MODEL = _env("LUNGPAIR_FALLBACK_MODEL", "gemini-3.8-flash")
 
-# --- Duncan's ranker API ------------------------------------------------------
-# "http://127.0.0.1:8000" (default) or "inprocess" to import backend/api.py
+# --- Ranker API (LungPair team repo) -------------------------------------------
+# "http://127.0.0.1:8000" (default) or "inprocess" to import backend/api.py from
+# LUNGPAIR_BACKEND_DIR (default: ./backend)
 # directly through Flask's test client (no server needed; fits the model once).
 LUNGPAIR_API = _env("LUNGPAIR_API", "http://127.0.0.1:8000")
 

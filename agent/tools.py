@@ -1,5 +1,5 @@
 """
-Tools the orchestrator agent may call. Thin wrappers around Duncan's ranker
+Tools the orchestrator agent may call. Thin wrappers around the team's ranker
 API (backend/api.py). All scoring, tiers, intervals and refusals come from the
 API; nothing here computes a score, and the language model never does either.
 
@@ -61,8 +61,8 @@ class HttpApi:
 
 class InProcessApi:
     def __init__(self):
-        backend = os.path.join(os.path.dirname(os.path.dirname(
-            os.path.abspath(__file__))), "backend")
+        backend = os.environ.get("LUNGPAIR_BACKEND_DIR") or os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "backend")
         if backend not in sys.path:
             sys.path.insert(0, backend)
         import api as _api                       # noqa: E402  (fits model once)
@@ -197,7 +197,7 @@ class LungPairTools:
         return self._chembl_cache[key]
 
     def rank_pairs(self, drugs: list[str], top: int = 20) -> dict:
-        """Rank every pair among the given drugs (Duncan's POST /rank)."""
+        """Rank every pair among the given drugs (the ranker's POST /rank)."""
         return self.api.post("/rank", {"drugs": list(drugs), "top": int(top)})
 
     def rank_partners(self, anchor: str, top: int = 10) -> dict:
