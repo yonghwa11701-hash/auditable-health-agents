@@ -4,6 +4,8 @@
 
 **For a lab scientist choosing the next drug combination to screen, this tool gives a short, cited shortlist. Every step is logged, and nothing goes ahead until a person approves it.**
 
+**Live demo:** [auditable-health-agents-1083517438974.europe-west2.run.app](https://auditable-health-agents-1083517438974.europe-west2.run.app). Step through a recorded live run and try the rule checks yourself. No sign-up, no model calls, and nothing you type is stored.
+
 It's built on Google Gemini. The same pattern fits any health-AI workflow where you need to show, afterwards, what each AI agent did, which sources it used, which rules it passed and who signed off.
 
 > Preclinical screening triage on public NCI-ALMANAC cell-line data. Not treatment advice. Not reviewed by a clinician.
@@ -45,7 +47,7 @@ Each run writes `runs/<timestamp>.jsonl` (append-only, numbered lines) and `runs
 
 ## Try it without a key
 
-Run the demo page locally with `python -m web.app` (standard library only), then open http://127.0.0.1:8080. It shows the recorded run and lets you try the rule checks.
+The same demo page runs locally with `python -m web.app` (standard library only), then open http://127.0.0.1:8080. It shows the recorded run and lets you try the rule checks.
 
 Or from the command line:
 
@@ -93,3 +95,10 @@ Agent layer, checks, run logs, replay and tests: Yong Hwa Hong. The LungPair ran
 ## Licence
 
 Apache-2.0 (see [`LICENSE`](LICENSE)). The LungPair ranker and data in the team repo have their own terms.
+
+## Deploying the demo
+
+```bash
+gcloud run deploy auditable-health-agents --source . --region europe-west2 \
+  --allow-unauthenticated --max-instances 2 --min-instances 0 --memory 256Mi
+```
