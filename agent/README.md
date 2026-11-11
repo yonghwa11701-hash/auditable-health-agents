@@ -1,6 +1,7 @@
 # LungPair agent pipeline (Google Gemini)
 
-A multi-step, multi-agent layer on top of the LungPair ranker (`backend/api.py`).
+A multi-step, multi-agent layer on top of the LungPair ranker (`backend/api.py`,
+in the [team repo](https://github.com/leventkoymen/backprop-to-the-future-b56f8f5e-submission-repo); not included here).
 A researcher types a question; three Gemini agents and plain-Python checks turn
 it into a short, cited, human-approved screening batch.
 
@@ -55,7 +56,7 @@ cancels a gate "fail".
 Every model call, tool call, gate result and the human decision is one line in
 `runs/<timestamp>.jsonl` (model ID, interaction ID, prompt summary, output,
 grounding URLs, search queries, token usage, estimated cost for Argon at the
-Builder Guide price). `runs/<timestamp>.report.json` holds the final report.
+introductory list price). `runs/<timestamp>.report.json` holds the final report.
 Key-shaped strings are redacted before writing.
 
 ## Run it
@@ -70,7 +71,7 @@ python -m agent.run "Which partner should a lab screen with gefitinib next?"
 Options: `--approve 1,3` (non-interactive sign-off), `--approver NAME`,
 `--top-k 3`, `--api inprocess` (no server: imports `backend/api.py`),
 `--no-pubmed-check`, and `--no-llm` (ranking + sign-off only, no Gemini call;
-clearly labelled `mode=no-llm` in the output and receipt; the Wi-Fi fallback).
+clearly labelled `mode=no-llm` in the output and receipt; useful offline).
 
 Good example drugs: gefitinib, docetaxel, carboplatin, pemetrexed.
 Osimertinib is **not** in NCI-ALMANAC and is reported as unknown.
@@ -90,19 +91,5 @@ model quality.
 
 - Research quality depends on Google Search results; web pages are treated as
   data, and identifiers are only shown if grounding backs them.
-- The tumour simulator (`tumour_simulator/`) is not wired in yet.
 - No design-build-test-learn replay loop yet: approved pairs are logged, not
   replayed against held-out data.
-
-## Cross-Disciplinary Evaluation Battery (AgentVerse Integration)
-
-We integrated the **Cross-Disciplinary Multi-Persona Evaluator** from our research into this codebase.
-Run receipts generated in `runs/` can be rigorously audited against 9 distinct professional personas (e.g. Biostatistician, ReguGate Guardian, Venture Capitalist) using strict Binary (Yes/No) evaluation batteries:
-
-```bash
-python agent/run_eval.py agent/runs/20261108-013436.jsonl
-```
-
-### Antigravity Custom Agents
-
-This repo also includes a `.agents/` folder conforming to the **Google Antigravity IDE** standard for isolated custom agent skills. This guarantees that `regugate-guardian` and `biostatistician` skills can be independently invoked directly inside your IDE or CI/CD pipelines without monolithic context rot.

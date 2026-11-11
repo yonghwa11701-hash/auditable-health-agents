@@ -1,77 +1,70 @@
 # auditable-health-agents
 
-**Gemini multi-agent pipelines for regulated health AI that you can run without watching them, and audit afterwards.**
+**For a lab scientist choosing the next drug combination to screen, this tool gives a short, cited shortlist. Every step is logged, and nothing goes ahead until a person approves it.**
 
-In regulated health work, the hard question isn't whether the agent can answer. It's whether you can prove what each agent did, which sources it used, which rules it passed, and who signed off. This repo is a working pattern for that. It's built on Google Gemini and was first used at AgentVerse 2026 (UCL, 7–8 Nov 2026) for preclinical drug-combination triage.
+It's built on Google Gemini. The same pattern fits any health-AI workflow where you need to show, afterwards, what each AI agent did, which sources it used, which rules it passed and who signed off.
 
-> Preclinical screening triage on public NCI-ALMANAC cell-line data. Not treatment advice. Not checked by a clinician.
+> Preclinical screening triage on public NCI-ALMANAC cell-line data. Not treatment advice. Not reviewed by a clinician.
 
-## What it does
+## How it works
 
 ```
 question
- -> Orchestrator   gemini-4-argon          function calling: resolve drugs, call the ranker tools
- -> Research pool  gemini-3.8-flash        parallel workers, Google Search grounding + URL context
- -> Gates          plain Python            5 deterministic checks; a model cannot override them
- -> Checker        gemini-3.5-flash-lite   structured-JSON semantic review
-      fail -> one retry with the failure fed back -> still failing: FLAGGED, ungrounded citations removed
- -> Human sign-off  only passed items can be approved
- -> Receipt         runs/<timestamp>.jsonl: one line per model call, tool call, gate and decision
+ -> Orchestrator   gemini-4-argon          calls the ranking tools
+ -> Research       gemini-3.8-flash        parallel workers with Google Search grounding
+ -> Rule checks    plain Python            fixed checks that no model can override
+ -> Checker        gemini-3.5-flash-lite   second review, structured JSON
+      fail -> one retry with the reason -> still failing: flagged, unsupported citations removed
+ -> Human sign-off  only items that passed can be approved
+ -> Run log         one JSON line per model call, tool call, check and decision
 ```
 
-## Three design rules
+## Three rules
 
-1. **Code owns state and numbers; models only make judgements.** Every score, tier and 95% interval comes from the deterministic ranker. A gate (`numbers_from_tools`) fails the run if a model writes a number that isn't in the tool output.
-2. **Citations must be grounded, not just plausible.** `citations_grounded` passes only if every PMID, DOI or URL the research agent writes also appears in the grounding metadata the Gemini API returned. Optionally, NCBI E-utilities is called to show whether an ungrounded PMID exists at all. Either way, an ungrounded citation never counts as grounded.
-3. **A human approves, and the approval is recorded.** The pipeline can't approve its own output. Only items that passed the gates can be offered for sign-off, and the decision (who, what, when) is written to the receipt.
+1. **Numbers come from code, not from the model.** Scores, tiers and 95% intervals all come from the ranker. A run fails if the model writes a number that isn't in the tool output.
+2. **A citation counts only if the search actually returned it.** Every PMID, DOI or URL must appear in the grounding data the Gemini API sent back.
+3. **A person approves the result.** The pipeline never approves its own output. If no one answers, nothing is approved. The decision (who, what, when) is written to the log.
 
-| Gate | Passes only if |
+| Check | Passes only if |
 |---|---|
-| `citations_grounded` | every citation appears in the API's grounding metadata |
+| `citations_grounded` | every citation appears in the API's grounding data |
 | `tier4_refused` | no withheld (low-evidence) item is ranked, researched or offered for approval |
-| `no_clinical_claim` | no treatment-advice or patient-benefit wording |
+| `no_clinical_claim` | there's no treatment-advice or patient-benefit wording |
 | `synthetic_labelled` | any mention of simulation also says "synthetic" |
-| `numbers_from_tools` | every number in the summary exists in the tool JSON |
+| `numbers_from_tools` | every number in the summary exists in the tool output |
 
-A checker "pass" never cancels a gate "fail".
+Two more checks run on the question itself: is it in scope, and are all the named drugs in the panel? A pass from the checker model never cancels a failed rule check.
 
-## The audit trail (receipt)
+## The run log
 
-Each run writes `runs/<timestamp>.jsonl` (append-only, sequence-numbered) and `runs/<timestamp>.report.json`. Each line records the model ID, interaction ID, prompt summary, output, grounding URLs, search queries, token usage and estimated cost, plus every gate result and the human decision. Key-shaped strings are redacted before anything is written, and a test checks this.
+Each run writes `runs/<timestamp>.jsonl` (append-only, numbered lines) and `runs/<timestamp>.report.json`. Each line records the model ID, interaction ID, output, grounding URLs, search queries, token use and estimated cost, plus every check result and the human decision. Anything shaped like an API key is removed before writing.
 
-The verified live run from 8 Nov 2026 (`data/recorded_run.jsonl`) has 21 events: 8 model calls, 2 tool calls, 5 gate sets, 1 human decision and 1 final report.
+`data/recorded_run.jsonl` is a real run from 8 Nov 2026 with 21 lines: 8 model calls, 2 tool calls, 5 sets of checks, 1 human decision and 1 report.
 
-## Try it (offline, no API key)
+## Try it without a key
 
 ```bash
 uv venv && uv pip install -r agent/requirements.txt pytest
-.venv/bin/python -m pytest -q agent/tests      # 25 tests, fake Gemini client
-.venv/bin/python -m agent.replay               # replays the recorded live run
+.venv/bin/python -m pytest -q agent/tests    # offline tests, fake Gemini client
+.venv/bin/python -m agent.replay --fast      # replay the recorded live run
 ```
 
-To run live, you also need the LungPair ranker backend (see Credits; not included here) and a key in your shell. Don't put the key in a file.
+A live run also needs the LungPair ranker from the [team repo](https://github.com/leventkoymen/backprop-to-the-future-b56f8f5e-submission-repo) and a key set in your shell. Never put the key in a file. See [`agent/README.md`](agent/README.md).
 
-```bash
-export GEMINI_API_KEY=...
-python -m agent.run "Which partner should a lab screen with gefitinib next?" --api inprocess
-```
+## Limits
 
-`--no-llm` runs ranking and sign-off only, with no Gemini call. The output and the receipt are clearly labelled `mode=no-llm`. It's the fallback when there's no network.
+- This is a prototype built at a two-day event. One live end-to-end run is recorded; everything else is tested offline.
+- The ranker underneath transferred weakly to an independent screen (Merck O'Neil: 40% vs 19% top-10 hit rate, p = 0.087, not significant). This pipeline shows that uncertainty. It doesn't remove it.
+- It isn't a medical device.
 
-## Honest limits
+## Next steps
 
-- This is a hackathon prototype. One live end-to-end run is recorded; the rest of the testing is offline with a fake client.
-- The underlying ranker transferred weakly to an independent screen (Merck O'Neil: 40% vs 19% top-10 hit rate, p = 0.087, not significant). The pipeline makes that kind of uncertainty visible. It doesn't remove it.
-- It isn't a medical device and has no regulatory status.
+- Scheduled runs that stop at sign-off and notify a reviewer.
+- Hash-chained, signed run logs that a quality reviewer can check without rerunning the models.
+- The same check-then-review-then-approve pattern as reusable Agent Development Kit components.
 
-## What I'd build next with Gemini / Antigravity
-
-- **Unattended runs:** scheduled runs that stop at the human sign-off step and send a notification, with the receipt as the hand-off.
-- **Audit trail as a first-class artifact:** signed, hash-chained receipts that a QMS reviewer (ISO 13485 / IEC 62304 style) can check without rerunning the models.
-- **ADK port:** the same gate-then-checker-then-human pattern as reusable Agent Development Kit components.
-
-See [`PATTERNS.md`](PATTERNS.md) for the build rules behind this.
+[`PATTERNS.md`](PATTERNS.md) lists the build rules behind this repo.
 
 ## Credits
 
-Agent layer, gates, receipts, replay and tests: Yong Hwa Hong. The LungPair ranker, data pipeline and 3D viewer are by team Backprop to the Future (AgentVerse 2026, Biotech track) and live in the team's submission repo.
+Agent layer, checks, run logs, replay and tests: Yong Hwa Hong. The LungPair ranker, data pipeline and 3D viewer are by team Backprop to the Future (AgentVerse 2026, UCL, Biotech track).

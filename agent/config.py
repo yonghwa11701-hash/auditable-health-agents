@@ -31,7 +31,7 @@ MAX_ORCH_TURNS = int(_env("LUNGPAIR_MAX_ORCH_TURNS", "6"))
 RESEARCH_TOP_K = int(_env("LUNGPAIR_RESEARCH_TOP_K", "5"))
 RESEARCH_RETRIES = int(_env("LUNGPAIR_RESEARCH_RETRIES", "1"))   # bounded retry
 # Research agents run in parallel, one per candidate pair (Gemini 3.8 Flash is
-# the Builder Guide's model for "fast parallel subagents").
+# positioned by Google for fast parallel sub-agents).
 RESEARCH_WORKERS = int(_env("LUNGPAIR_RESEARCH_WORKERS", "5"))
 # Stopping rule: wall-clock budget for the whole research stage. Pairs not
 # finished in time are marked "timeout", never silently dropped.
@@ -42,8 +42,8 @@ HTTP_TIMEOUT_S = float(_env("LUNGPAIR_HTTP_TIMEOUT_S", "120"))
 RUNS_DIR = _env("LUNGPAIR_RUNS_DIR", os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "runs"))
 
-# Introductory price for gemini-4-argon quoted in the organisers' Builder Guide
-# (USD per 1M tokens, until 30 Nov 2026). Not checked with Google. Other models:
+# Introductory list price for gemini-4-argon (USD per 1M tokens, valid to
+# 30 Nov 2026), used only for the cost estimate in the run log. Check current pricing. Other models:
 # token counts are logged, no cost estimate is made.
 PRICE_PER_M_TOKENS = {
     "gemini-4-argon": {"input": 2.0, "output": 10.0},

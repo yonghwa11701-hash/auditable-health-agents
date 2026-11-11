@@ -1,7 +1,7 @@
 """
 CLI:  python -m agent.run "Which partner should a lab screen with gefitinib next?"
 
-  --no-llm         ranking + approval only, no Gemini call (Wi-Fi fallback;
+  --no-llm         ranking + approval only, no Gemini call (offline mode;
                    output is labelled as such)
   --approve 1,3    non-interactive approval (else you are asked)
   --approver NAME  recorded in the log
@@ -48,9 +48,9 @@ def interactive_approve(approver: str, preset: str | None):
             try:
                 raw = input(prompt).strip()
             except (EOFError, KeyboardInterrupt):
-                default_cand = str(min(passable)) if passable else "none"
-                print(f"\n[Non-interactive input: auto-selected candidate {default_cand} for demo]")
-                raw = default_cand
+                # No human answer means no approval. Never auto-approve.
+                print("\n[No input received: nothing approved. Use --approve to sign off non-interactively.]")
+                raw = "none"
 
         requested: set[int] = set()
         raw_clean = raw.lower().strip()
@@ -118,8 +118,8 @@ def main(argv=None) -> int:
     tools = LungPairTools(make_api(a.api))
     approver = a.approver or getpass.getuser()
     print("=" * 80)
-    print("🫁 LungPair Multi-Agent Triage — Powered by Google Gemini Developer API")
-    print(f"   Architecture: Orchestrator ({config.ORCHESTRATOR_MODEL}) | Research ({config.RESEARCH_MODEL}) | Checker ({config.CHECKER_MODEL})")
+    print("LungPair multi-agent triage (Google Gemini)")
+    print(f"   Models: orchestrator ({config.ORCHESTRATOR_MODEL}) | research ({config.RESEARCH_MODEL}) | checker ({config.CHECKER_MODEL})")
     print(f"   Run ID: {log.run_id} | Mode: {log.mode} | Receipt: {log.path}")
     print("=" * 80)
     from .checks import out_of_scope_drugs

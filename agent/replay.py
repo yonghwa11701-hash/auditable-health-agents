@@ -1,8 +1,8 @@
-"""LungPair Recorded Run Replay Engine.
+"""Replay a recorded live run.
 
 Replays a verified live multi-agent execution recorded from Google Gemini APIs
 (orchestrator: gemini-4-argon, research: gemini-3.8-flash, checker: gemini-3.5-flash-lite).
-Guarantees 100% offline pitch and evaluation insurance in case of venue Wi-Fi failure.
+Lets anyone inspect a real run without an API key or network access.
 """
 
 from __future__ import annotations
@@ -37,14 +37,14 @@ def replay_run(
     run_id = data.get("run_id", "20261108-013436")
 
     print("=" * 80)
-    print("🫁 LungPair Multi-Agent Live Run Replay (Verified Live Run)")
+    print("LungPair multi-agent run: replay of a recorded live run")
     print(f"   Recorded: 2026-11-08 01:34 AM (Google Gemini Live APIs) | Offline Replay")
     print("=" * 80)
     time.sleep(delay)
 
     question = data.get("question", "Which partner should a lab screen with gefitinib next?")
     print(f"\nQuestion: {question}")
-    print(f"Mode: verified-live-replay  |  Audit ID: runs/{run_id}.jsonl")
+    print(f"Mode: verified-live-replay  |  Run log: data/recorded_run.jsonl (run {run_id})")
     print(
         "Models: orchestrator=gemini-4-argon research=gemini-3.8-flash checker=gemini-3.5-flash-lite"
     )
@@ -97,7 +97,7 @@ def replay_run(
                 print(f"  Grounded PMIDs: {', '.join(sorted(set(pmids)))}")
 
     orch = data.get("orchestrator") or {}
-    print(f"\n[Checker: gemini-3.5-flash-lite + 8 Deterministic Python Gates]")
+    print(f"\n[Checker: gemini-3.5-flash-lite + deterministic Python gates]")
     for g in orch.get("gates", []):
         print(f"  Gate '{g['gate']}': {'PASS' if g.get('pass') else 'FAIL'}")
 
@@ -110,7 +110,7 @@ def replay_run(
 
     print(f"\napproved by {user}: {approved_names or 'none'}")
     print(f"\n{data.get('disclaimer', '')}")
-    print(f"receipt: data/recorded_run.jsonl (live verified receipt)")
+    print(f"receipt: data/recorded_run.jsonl (recorded live run)")
     return 0
 
 

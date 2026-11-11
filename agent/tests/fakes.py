@@ -1,7 +1,7 @@
 """
 OFFLINE TEST DOUBLES. Nothing here is Gemini output. FakeGemini returns
 hand-written, Interactions-API-shaped dicts so the wiring, gates and logging
-can be tested without a key or network. Never use these in a demo.
+can be tested without a key or network. Never use these for real runs.
 """
 import json
 
