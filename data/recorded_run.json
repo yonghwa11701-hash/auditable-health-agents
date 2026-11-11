@@ -1,0 +1,586 @@
+{
+ "run_id": "20261108-013436",
+ "question": "Which partner should a lab screen with gefitinib next?",
+ "mode": "live",
+ "disclaimer": "Preclinical screening triage on public NCI-ALMANAC cell-line data. Not treatment advice. Not checked by a clinician.",
+ "out_of_scope": [],
+ "ranking_source": "rank_partners",
+ "ranked": [
+  {
+   "drug_a": "Docetaxel",
+   "drug_b": "Gefitinib",
+   "evidence": {
+    "status": "passed",
+    "attempts": 1,
+    "text": "**Mechanism:** \nDocetaxel stabilizes microtubules causing mitotic arrest, while gefitinib inhibits EGFR tyrosine kinase signaling to disrupt downstream MAPK and PI3K/Akt survival pathways. Sequential delivery can suppress chemotherapy-induced EGFR phosphorylation and cooperatively trigger apoptosis.\n\n**Prior evidence:** \n- *Cell-line:* In NSCLC models (including PC-9, NCI-H1650, and A549), sequential treatment with docetaxel followed by gefitinib demonstrated schedule-dependent synergy, enhancing apoptosis and repressing docetaxel-induced EGFR/ERK activation (PMID: 24728492, PMID: 25474307). \n- *Early clinical:* A Phase I trial confirmed the feasibility and lack of significant pharmacokinetic interactions between docetaxel and gefitinib in advanced NSCLC (PMID: 26233803). A Phase II study in elderly patients with advanced NSCLC reported a 40% objective response rate with docetaxel plus gefitinib (PMID: 18300255). Conversely, an earlier Phase I/II study of weekly docetaxel and gefitinib in elderly NSCLC patients was stopped early due to excessive non-hematologic toxicity (PMID: 16638621).\n\n**Safety/toxicity notes:** \nOverlapping toxicities include neutropenia, diarrhea, skin rash, fatigue, stomatitis, and elevated transaminases. \n\n**Evidence level:** \nEarly clinical",
+    "_raw_text": "**Mechanism:** \nDocetaxel stabilizes microtubules causing mitotic arrest, while gefitinib inhibits EGFR tyrosine kinase signaling to disrupt downstream MAPK and PI3K/Akt survival pathways. Sequential delivery can suppress chemotherapy-induced EGFR phosphorylation and cooperatively trigger apoptosis.\n\n**Prior evidence:** \n- *Cell-line:* In NSCLC models (including PC-9, NCI-H1650, and A549), sequential treatment with docetaxel followed by gefitinib demonstrated schedule-dependent synergy, enhancing apoptosis and repressing docetaxel-induced EGFR/ERK activation (PMID: 24728492, PMID: 25474307). \n- *Early clinical:* A Phase I trial confirmed the feasibility and lack of significant pharmacokinetic interactions between docetaxel and gefitinib in advanced NSCLC (PMID: 26233803). A Phase II study in elderly patients with advanced NSCLC reported a 40% objective response rate with docetaxel plus gefitinib (PMID: 18300255). Conversely, an earlier Phase I/II study of weekly docetaxel and gefitinib in elderly NSCLC patients was stopped early due to excessive non-hematologic toxicity (PMID: 16638621).\n\n**Safety/toxicity notes:** \nOverlapping toxicities include neutropenia, diarrhea, skin rash, fatigue, stomatitis, and elevated transaminases. \n\n**Evidence level:** \nEarly clinical",
+    "grounding": [
+     {
+      "url": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEEcJfgPwA1xwN9lyfkIDklb6cL3u40eeNvrg0D5I70d8umarhILv6oly2nWThXs8If9mHv9GFZNBR1hWdhxwLrm1_HzRnPqwdGoLmbqvTxprXhVowpPgHwW7ISPrsDtzH6",
+      "title": "mdpi.com",
+      "source": "url_citation",
+      "resolved_url": "https://www.mdpi.com/1999-4923/18/4/402/pdf"
+     },
+     {
+      "url": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQE6OLL9-d513by2EadNh6IexgiKjA5p3GljBrMY_RyWF8mjjdCuYETeUn_C0ACcy0GGRoCjqqpdoFQzT_T8ZEcwKZHopWYJpikmTduxuFigH3p2T8aIGOyu11S47WOZSA==",
+      "title": "nih.gov",
+      "source": "url_citation",
+      "resolved_url": "https://pubmed.ncbi.nlm.nih.gov/24728492/"
+     },
+     {
+      "url": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFC6TuViFR45-zLwht6T5kyI6SvHWdCyEdu9c1Sdep_AjRDmwWFZOLCyXPnDyqvp8Qs8TKiC85V_RdQzNMGM3Gi1l-7NkJxJsGWQYOOs3xK2HNuplbyP9b9Bk4SDSDA",
+      "title": "nih.gov",
+      "source": "url_citation",
+      "resolved_url": "https://pubmed.ncbi.nlm.nih.gov/25474307/"
+     },
+     {
+      "url": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHZu4F04f8w_oj7qkmXmuunjOsAuwbT6lVFpgA1DrJZC5kDlemk3sjU6Sx-P4Bl6ySkD3l32bW_Mnh-YHS_E8sjUDyUqyFE1NjDDyZeizB-4mCl3x3AUV1Kul6ogngXCg==",
+      "title": "nih.gov",
+      "source": "url_citation",
+      "resolved_url": "https://pubmed.ncbi.nlm.nih.gov/26233803/"
+     },
+     {
+      "url": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQF4tC49wF53o_9hf368PFebV1_fwqX3yeKi-FEEX-lTZZoBrUDE3obItJJKXM3Mzv5anEbtyQJGV6sdUtKE6QWM-MjqmlQMv-RvyQmAq0Jqu058KgpyV9KjzNQDd_kRww==",
+      "title": "nih.gov",
+      "source": "url_citation",
+      "resolved_url": "https://pubmed.ncbi.nlm.nih.gov/18300255/"
+     },
+     {
+      "url": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFBcNHuTKY7Sw27KBhr45EQvGjaC-2eEMKESxaVhB9HKxL4jfeqo9xmdRFhEawDdfgFo0SHBe6QjySFOeafP4wdixcK_dFtsuC8xH-HGYmSyRSNBHRXdT9guBpS-h2VPw==",
+      "title": "nih.gov",
+      "source": "url_citation",
+      "resolved_url": "https://pubmed.ncbi.nlm.nih.gov/16638621/"
+     },
+     {
+      "url": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEhDvOYE6NcZaE062NYYnd1H-Q4dvMuqBttRTtLrc5KCOpGkFWR3_i23BIOe02_eV_WJ-9r85pvVs8NB-7f-yxUOBzEdoCB-zoY889YJBLkzKZeEgJNsMA87DbaHJMeog==",
+      "title": "nih.gov",
+      "source": "url_citation",
+      "resolved_url": "https://pubmed.ncbi.nlm.nih.gov/16638621/"
+     },
+     {
+      "url": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGRojJe5B9a6_96r8X1e-61sDJp_BYxyoBLY87U0HjujE2pnPLMTeRav3W7TsUSDXMRlnMIa-Ryb5-86nQKjVwGjW7HwJa0nJTQ6FAdC9EvBob7c9uVGyU-TcusT-NP7204NvprCVB-JGhwCnWQui16uFPl_94vn7ESIdev8Sk3at2dx70Ie-_ibb-5TZ6O19AMJ_d-mqqA6ZMppsBvDg6bfWmJpvCiSu6Jmiw8tZ2m429hNyAT9Saz71khQza-X53QvMsry15MZ1ivKujo74ajnAhxCAOvaM_1kw==",
+      "title": "researchgate.net",
+      "source": "url_citation",
+      "resolved_url": "https://www.researchgate.net/publication/23491396_Gefitinib_versus_docetaxel_in_previously_treated_non-small-cell_lung_cancer_INTEREST_A_randomised_phase_III_trial"
+     },
+     {
+      "url": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGyBkereNglUfZ6FswkoxzWYK29MD_CPUCxOh1XhwRmI1jLtXDQm_v0uVZvafP0mXoAjWLJ-aMycZqBqihhQb-xSpMikJ2H1O_3WEGh8rtIKYpH-u9YtPd_7FPwOinYHQ==",
+      "title": "nih.gov",
+      "source": "url_citation",
+      "resolved_url": "https://pubmed.ncbi.nlm.nih.gov/16896930/"
+     }
+    ],
+    "gates": [
+     {
+      "gate": "citations_grounded",
+      "pass": true,
+      "detail": {
+       "cited": [
+        {
+         "id": "PMID:16638621",
+         "status": "grounded"
+        },
+        {
+         "id": "PMID:18300255",
+         "status": "grounded"
+        },
+        {
+         "id": "PMID:24728492",
+         "status": "grounded"
+        },
+        {
+         "id": "PMID:25474307",
+         "status": "grounded"
+        },
+        {
+         "id": "PMID:26233803",
+         "status": "grounded"
+        }
+       ],
+       "n_grounding_urls": 9,
+       "not_grounded": []
+      }
+     },
+     {
+      "gate": "no_clinical_claim",
+      "pass": true,
+      "detail": {
+       "matched": [],
+       "strict": false
+      }
+     },
+     {
+      "gate": "synthetic_labelled",
+      "pass": true,
+      "detail": {
+       "mentions_simulation": false
+      }
+     }
+    ],
+    "checker": {
+     "clinical_benefit_claim": false,
+     "recommends_withheld_pair": false,
+     "unsupported_specific_claims": [],
+     "simulation_unlabelled": false,
+     "passes": true,
+     "reason": "The text accurately cites its claims, discusses mechanisms and clinical evidence without making unverified patient benefit claims or recommending withheld pairs."
+    },
+    "model": "gemini-3.8-flash"
+   },
+   "expected_precision_at_20": 0.89,
+   "interval_95": [
+    127.3,
+    197.3
+   ],
+   "nsc_a": 628503,
+   "nsc_b": 715055,
+   "rank": 7,
+   "ranked": true,
+   "score": 162.3,
+   "tier": 1,
+   "partner_rank": 1
+  },
+  {
+   "drug_a": "Mitoxantrone",
+   "drug_b": "Gefitinib",
+   "evidence": {
+    "status": "timeout",
+    "text": "research not finished within 90 s budget"
+   },
+   "expected_precision_at_20": 0.89,
+   "interval_95": [
+    117.4,
+    187.4
+   ],
+   "nsc_a": 279836,
+   "nsc_b": 715055,
+   "rank": 8,
+   "ranked": true,
+   "score": 152.4,
+   "tier": 1,
+   "partner_rank": 2
+  },
+  {
+   "drug_a": "Gefitinib",
+   "drug_b": "Cabazitaxel",
+   "evidence": "pair measured in another cancer",
+   "expected_precision_at_20": 0.89,
+   "interval_95": [
+    90.6,
+    160.6
+   ],
+   "nsc_a": 715055,
+   "nsc_b": 761432,
+   "rank": 19,
+   "ranked": true,
+   "score": 125.6,
+   "tier": 1,
+   "partner_rank": 3
+  },
+  {
+   "drug_a": "Vincristine sulfate",
+   "drug_b": "Gefitinib",
+   "evidence": "pair measured in another cancer",
+   "expected_precision_at_20": 0.89,
+   "interval_95": [
+    64.3,
+    134.3
+   ],
+   "nsc_a": 67574,
+   "nsc_b": 715055,
+   "rank": 27,
+   "ranked": true,
+   "score": 99.3,
+   "tier": 1,
+   "partner_rank": 4
+  },
+  {
+   "drug_a": "Vinblastine sulfate",
+   "drug_b": "Gefitinib",
+   "evidence": "pair measured in another cancer",
+   "expected_precision_at_20": 0.89,
+   "interval_95": [
+    55.4,
+    125.4
+   ],
+   "nsc_a": 49842,
+   "nsc_b": 715055,
+   "rank": 42,
+   "ranked": true,
+   "score": 90.4,
+   "tier": 1,
+   "partner_rank": 5
+  },
+  {
+   "drug_a": "Paclitaxel",
+   "drug_b": "Gefitinib",
+   "evidence": "pair measured in another cancer",
+   "expected_precision_at_20": 0.89,
+   "interval_95": [
+    53.6,
+    123.6
+   ],
+   "nsc_a": 125973,
+   "nsc_b": 715055,
+   "rank": 45,
+   "ranked": true,
+   "score": 88.6,
+   "tier": 1,
+   "partner_rank": 6
+  },
+  {
+   "drug_a": "Daunorubicin hydrochloride",
+   "drug_b": "Gefitinib",
+   "evidence": "pair measured in another cancer",
+   "expected_precision_at_20": 0.89,
+   "interval_95": [
+    52.1,
+    122.1
+   ],
+   "nsc_a": 82151,
+   "nsc_b": 715055,
+   "rank": 51,
+   "ranked": true,
+   "score": 87.1,
+   "tier": 1,
+   "partner_rank": 7
+  },
+  {
+   "drug_a": "Mithramycin",
+   "drug_b": "Gefitinib",
+   "evidence": "pair measured in another cancer",
+   "expected_precision_at_20": 0.89,
+   "interval_95": [
+    47.8,
+    117.8
+   ],
+   "nsc_a": 24559,
+   "nsc_b": 715055,
+   "rank": 58,
+   "ranked": true,
+   "score": 82.8,
+   "tier": 1,
+   "partner_rank": 8
+  },
+  {
+   "drug_a": "Dactinomycin",
+   "drug_b": "Gefitinib",
+   "evidence": "pair measured in another cancer",
+   "expected_precision_at_20": 0.89,
+   "interval_95": [
+    47.2,
+    117.2
+   ],
+   "nsc_a": 3053,
+   "nsc_b": 715055,
+   "rank": 60,
+   "ranked": true,
+   "score": 82.2,
+   "tier": 1,
+   "partner_rank": 9
+  },
+  {
+   "drug_a": "Vinorelbine tartrate",
+   "drug_b": "Gefitinib",
+   "evidence": "pair measured in another cancer",
+   "expected_precision_at_20": 0.89,
+   "interval_95": [
+    45.8,
+    115.8
+   ],
+   "nsc_a": 608210,
+   "nsc_b": 715055,
+   "rank": 64,
+   "ranked": true,
+   "score": 80.8,
+   "tier": 1,
+   "partner_rank": 10
+  }
+ ],
+ "withheld": [],
+ "unknown": [],
+ "ranker_model_version": "d920e0cb683a",
+ "orchestrator": {
+  "summary": "Here are the top 10 combination partners for **Gefitinib** (NSC 715055) from the preclinical NCI-ALMANAC NSCLC screening panel:\n\n| Partner Rank | Pair | Tier | Score | 95% Interval | Evidence |\n|---|---|---|---|---|---|\n| 1 | Docetaxel (NSC 628503) + Gefitinib | 1 | 162.3 | [127.3, 197.3] | pair measured in another cancer |\n| 2 | Mitoxantrone (NSC 279836) + Gefitinib | 1 | 152.4 | [117.4, 187.4] | pair measured in another cancer |\n| 3 | Gefitinib + Cabazitaxel (NSC 761432) | 1 | 125.6 | [90.6, 160.6] | pair measured in another cancer |\n| 4 | Vincristine sulfate (NSC 67574) + Gefitinib | 1 | 99.3 | [64.3, 134.3] | pair measured in another cancer |\n| 5 | Vinblastine sulfate (NSC 49842) + Gefitinib | 1 | 90.4 | [55.4, 125.4] | pair measured in another cancer |\n| 6 | Paclitaxel (NSC 125973) + Gefitinib | 1 | 88.6 | [53.6, 123.6] | pair measured in another cancer |\n| 7 | Daunorubicin hydrochloride (NSC 82151) + Gefitinib | 1 | 87.1 | [52.1, 122.1] | pair measured in another cancer |\n| 8 | Mithramycin (NSC 24559) + Gefitinib | 1 | 82.8 | [47.8, 117.8] | pair measured in another cancer |\n| 9 | Dactinomycin (NSC 3053) + Gefitinib | 1 | 82.2 | [47.2, 117.2] | pair measured in another cancer |\n| 10 | Vinorelbine tartrate (NSC 608210) + Gefitinib | 1 | 80.8 | [45.8, 115.8] | pair measured in another cancer |\n\n*(Note: Any Tier 4 pairs are withheld by the ranker and never recommended because they need monotherapy measurements first.)*\n\n### Summary\nFor preclinical screening triage in NSCLC cell lines, the top ranked combination partners for Gefitinib are all supported by Tier 1 evidence (pair measured in another cancer). The highest-ranked candidate is **Docetaxel + Gefitinib** (Tier 1, score 162.3, 95% interval [127.3, 197.3]), followed by **Mitoxantrone + Gefitinib** (Tier 1, score 152.4, 95% interval [117.4, 187.4]) and **Gefitinib + Cabazitaxel** (Tier 1, score 125.6, 95% interval [90.6, 160.6]). Additional Tier 1 candidates include **Vincristine sulfate + Gefitinib** (score 99.3, 95% interval [64.3, 134.3]) and **Vinblastine sulfate + Gefitinib** (score 90.4, 95% interval [55.4, 125.4]). These results are for laboratory screening prioritization only and make no claim of clinical or patient benefit.",
+  "model": "gemini-4-argon",
+  "turns": 3,
+  "hit_turn_cap": false,
+  "gates": [
+   {
+    "gate": "no_clinical_claim",
+    "pass": true,
+    "detail": {
+     "matched": [],
+     "strict": true
+    }
+   },
+   {
+    "gate": "synthetic_labelled",
+    "pass": true,
+    "detail": {
+     "mentions_simulation": false
+    }
+   },
+   {
+    "gate": "numbers_from_tools",
+    "pass": true,
+    "detail": {
+     "numbers": [
+      "162.3",
+      "127.3",
+      "197.3",
+      "152.4",
+      "117.4",
+      "187.4",
+      "125.6",
+      "90.6",
+      "160.6",
+      "99.3",
+      "64.3",
+      "134.3",
+      "90.4",
+      "55.4",
+      "125.4",
+      "88.6",
+      "53.6",
+      "123.6",
+      "87.1",
+      "52.1",
+      "122.1",
+      "82.8",
+      "47.8",
+      "117.8",
+      "82.2",
+      "47.2",
+      "117.2",
+      "80.8",
+      "45.8",
+      "115.8",
+      "162.3",
+      "127.3",
+      "197.3",
+      "152.4",
+      "117.4",
+      "187.4",
+      "125.6",
+      "90.6",
+      "160.6",
+      "99.3",
+      "64.3",
+      "134.3",
+      "90.4",
+      "55.4",
+      "125.4"
+     ],
+     "not_in_tool_output": []
+    }
+   },
+   {
+    "gate": "tier4_refused",
+    "pass": true,
+    "detail": {
+     "n_withheld": 0,
+     "tier4_in_ranked": [],
+     "tier4_in_candidates": []
+    }
+   }
+  ],
+  "checker": {
+   "clinical_benefit_claim": false,
+   "recommends_withheld_pair": false,
+   "unsupported_specific_claims": [],
+   "simulation_unlabelled": false,
+   "passes": true,
+   "reason": "The text presents preclinical lab screening data without making clinical benefit claims, without recommending withheld pairs, and explicitly notes that the results are for laboratory screening prioritization only."
+  },
+  "status": "passed"
+ },
+ "tier4_gate": {
+  "gate": "tier4_refused",
+  "pass": true,
+  "detail": {
+   "n_withheld": 0,
+   "tier4_in_ranked": [],
+   "tier4_in_candidates": []
+  }
+ },
+ "candidates": [
+  {
+   "drug_a": "Docetaxel",
+   "drug_b": "Gefitinib",
+   "evidence": {
+    "status": "passed",
+    "attempts": 1,
+    "text": "**Mechanism:** \nDocetaxel stabilizes microtubules causing mitotic arrest, while gefitinib inhibits EGFR tyrosine kinase signaling to disrupt downstream MAPK and PI3K/Akt survival pathways. Sequential delivery can suppress chemotherapy-induced EGFR phosphorylation and cooperatively trigger apoptosis.\n\n**Prior evidence:** \n- *Cell-line:* In NSCLC models (including PC-9, NCI-H1650, and A549), sequential treatment with docetaxel followed by gefitinib demonstrated schedule-dependent synergy, enhancing apoptosis and repressing docetaxel-induced EGFR/ERK activation (PMID: 24728492, PMID: 25474307). \n- *Early clinical:* A Phase I trial confirmed the feasibility and lack of significant pharmacokinetic interactions between docetaxel and gefitinib in advanced NSCLC (PMID: 26233803). A Phase II study in elderly patients with advanced NSCLC reported a 40% objective response rate with docetaxel plus gefitinib (PMID: 18300255). Conversely, an earlier Phase I/II study of weekly docetaxel and gefitinib in elderly NSCLC patients was stopped early due to excessive non-hematologic toxicity (PMID: 16638621).\n\n**Safety/toxicity notes:** \nOverlapping toxicities include neutropenia, diarrhea, skin rash, fatigue, stomatitis, and elevated transaminases. \n\n**Evidence level:** \nEarly clinical",
+    "_raw_text": "**Mechanism:** \nDocetaxel stabilizes microtubules causing mitotic arrest, while gefitinib inhibits EGFR tyrosine kinase signaling to disrupt downstream MAPK and PI3K/Akt survival pathways. Sequential delivery can suppress chemotherapy-induced EGFR phosphorylation and cooperatively trigger apoptosis.\n\n**Prior evidence:** \n- *Cell-line:* In NSCLC models (including PC-9, NCI-H1650, and A549), sequential treatment with docetaxel followed by gefitinib demonstrated schedule-dependent synergy, enhancing apoptosis and repressing docetaxel-induced EGFR/ERK activation (PMID: 24728492, PMID: 25474307). \n- *Early clinical:* A Phase I trial confirmed the feasibility and lack of significant pharmacokinetic interactions between docetaxel and gefitinib in advanced NSCLC (PMID: 26233803). A Phase II study in elderly patients with advanced NSCLC reported a 40% objective response rate with docetaxel plus gefitinib (PMID: 18300255). Conversely, an earlier Phase I/II study of weekly docetaxel and gefitinib in elderly NSCLC patients was stopped early due to excessive non-hematologic toxicity (PMID: 16638621).\n\n**Safety/toxicity notes:** \nOverlapping toxicities include neutropenia, diarrhea, skin rash, fatigue, stomatitis, and elevated transaminases. \n\n**Evidence level:** \nEarly clinical",
+    "grounding": [
+     {
+      "url": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEEcJfgPwA1xwN9lyfkIDklb6cL3u40eeNvrg0D5I70d8umarhILv6oly2nWThXs8If9mHv9GFZNBR1hWdhxwLrm1_HzRnPqwdGoLmbqvTxprXhVowpPgHwW7ISPrsDtzH6",
+      "title": "mdpi.com",
+      "source": "url_citation",
+      "resolved_url": "https://www.mdpi.com/1999-4923/18/4/402/pdf"
+     },
+     {
+      "url": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQE6OLL9-d513by2EadNh6IexgiKjA5p3GljBrMY_RyWF8mjjdCuYETeUn_C0ACcy0GGRoCjqqpdoFQzT_T8ZEcwKZHopWYJpikmTduxuFigH3p2T8aIGOyu11S47WOZSA==",
+      "title": "nih.gov",
+      "source": "url_citation",
+      "resolved_url": "https://pubmed.ncbi.nlm.nih.gov/24728492/"
+     },
+     {
+      "url": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFC6TuViFR45-zLwht6T5kyI6SvHWdCyEdu9c1Sdep_AjRDmwWFZOLCyXPnDyqvp8Qs8TKiC85V_RdQzNMGM3Gi1l-7NkJxJsGWQYOOs3xK2HNuplbyP9b9Bk4SDSDA",
+      "title": "nih.gov",
+      "source": "url_citation",
+      "resolved_url": "https://pubmed.ncbi.nlm.nih.gov/25474307/"
+     },
+     {
+      "url": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHZu4F04f8w_oj7qkmXmuunjOsAuwbT6lVFpgA1DrJZC5kDlemk3sjU6Sx-P4Bl6ySkD3l32bW_Mnh-YHS_E8sjUDyUqyFE1NjDDyZeizB-4mCl3x3AUV1Kul6ogngXCg==",
+      "title": "nih.gov",
+      "source": "url_citation",
+      "resolved_url": "https://pubmed.ncbi.nlm.nih.gov/26233803/"
+     },
+     {
+      "url": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQF4tC49wF53o_9hf368PFebV1_fwqX3yeKi-FEEX-lTZZoBrUDE3obItJJKXM3Mzv5anEbtyQJGV6sdUtKE6QWM-MjqmlQMv-RvyQmAq0Jqu058KgpyV9KjzNQDd_kRww==",
+      "title": "nih.gov",
+      "source": "url_citation",
+      "resolved_url": "https://pubmed.ncbi.nlm.nih.gov/18300255/"
+     },
+     {
+      "url": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFBcNHuTKY7Sw27KBhr45EQvGjaC-2eEMKESxaVhB9HKxL4jfeqo9xmdRFhEawDdfgFo0SHBe6QjySFOeafP4wdixcK_dFtsuC8xH-HGYmSyRSNBHRXdT9guBpS-h2VPw==",
+      "title": "nih.gov",
+      "source": "url_citation",
+      "resolved_url": "https://pubmed.ncbi.nlm.nih.gov/16638621/"
+     },
+     {
+      "url": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEhDvOYE6NcZaE062NYYnd1H-Q4dvMuqBttRTtLrc5KCOpGkFWR3_i23BIOe02_eV_WJ-9r85pvVs8NB-7f-yxUOBzEdoCB-zoY889YJBLkzKZeEgJNsMA87DbaHJMeog==",
+      "title": "nih.gov",
+      "source": "url_citation",
+      "resolved_url": "https://pubmed.ncbi.nlm.nih.gov/16638621/"
+     },
+     {
+      "url": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGRojJe5B9a6_96r8X1e-61sDJp_BYxyoBLY87U0HjujE2pnPLMTeRav3W7TsUSDXMRlnMIa-Ryb5-86nQKjVwGjW7HwJa0nJTQ6FAdC9EvBob7c9uVGyU-TcusT-NP7204NvprCVB-JGhwCnWQui16uFPl_94vn7ESIdev8Sk3at2dx70Ie-_ibb-5TZ6O19AMJ_d-mqqA6ZMppsBvDg6bfWmJpvCiSu6Jmiw8tZ2m429hNyAT9Saz71khQza-X53QvMsry15MZ1ivKujo74ajnAhxCAOvaM_1kw==",
+      "title": "researchgate.net",
+      "source": "url_citation",
+      "resolved_url": "https://www.researchgate.net/publication/23491396_Gefitinib_versus_docetaxel_in_previously_treated_non-small-cell_lung_cancer_INTEREST_A_randomised_phase_III_trial"
+     },
+     {
+      "url": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGyBkereNglUfZ6FswkoxzWYK29MD_CPUCxOh1XhwRmI1jLtXDQm_v0uVZvafP0mXoAjWLJ-aMycZqBqihhQb-xSpMikJ2H1O_3WEGh8rtIKYpH-u9YtPd_7FPwOinYHQ==",
+      "title": "nih.gov",
+      "source": "url_citation",
+      "resolved_url": "https://pubmed.ncbi.nlm.nih.gov/16896930/"
+     }
+    ],
+    "gates": [
+     {
+      "gate": "citations_grounded",
+      "pass": true,
+      "detail": {
+       "cited": [
+        {
+         "id": "PMID:16638621",
+         "status": "grounded"
+        },
+        {
+         "id": "PMID:18300255",
+         "status": "grounded"
+        },
+        {
+         "id": "PMID:24728492",
+         "status": "grounded"
+        },
+        {
+         "id": "PMID:25474307",
+         "status": "grounded"
+        },
+        {
+         "id": "PMID:26233803",
+         "status": "grounded"
+        }
+       ],
+       "n_grounding_urls": 9,
+       "not_grounded": []
+      }
+     },
+     {
+      "gate": "no_clinical_claim",
+      "pass": true,
+      "detail": {
+       "matched": [],
+       "strict": false
+      }
+     },
+     {
+      "gate": "synthetic_labelled",
+      "pass": true,
+      "detail": {
+       "mentions_simulation": false
+      }
+     }
+    ],
+    "checker": {
+     "clinical_benefit_claim": false,
+     "recommends_withheld_pair": false,
+     "unsupported_specific_claims": [],
+     "simulation_unlabelled": false,
+     "passes": true,
+     "reason": "The text accurately cites its claims, discusses mechanisms and clinical evidence without making unverified patient benefit claims or recommending withheld pairs."
+    },
+    "model": "gemini-3.8-flash"
+   },
+   "expected_precision_at_20": 0.89,
+   "interval_95": [
+    127.3,
+    197.3
+   ],
+   "nsc_a": 628503,
+   "nsc_b": 715055,
+   "rank": 7,
+   "ranked": true,
+   "score": 162.3,
+   "tier": 1,
+   "partner_rank": 1
+  },
+  {
+   "drug_a": "Mitoxantrone",
+   "drug_b": "Gefitinib",
+   "evidence": {
+    "status": "timeout",
+    "text": "research not finished within 90 s budget"
+   },
+   "expected_precision_at_20": 0.89,
+   "interval_95": [
+    117.4,
+    187.4
+   ],
+   "nsc_a": 279836,
+   "nsc_b": 715055,
+   "rank": 8,
+   "ranked": true,
+   "score": 152.4,
+   "tier": 1,
+   "partner_rank": 2
+  }
+ ],
+ "human_decision": {
+  "approved": [
+   1
+  ],
+  "approver": "yonghwahong",
+  "raw_input": "1",
+  "blocked": [],
+  "note": "approved for the next screening batch (lab decision, not clinical)",
+  "approved_pairs": [
+   {
+    "drug_a": "Docetaxel",
+    "drug_b": "Gefitinib",
+    "nsc_a": 628503,
+    "nsc_b": 715055,
+    "tier": 1,
+    "score": 162.3,
+    "interval_95": [
+     127.3,
+     197.3
+    ]
+   }
+  ]
+ }
+}
