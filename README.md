@@ -45,6 +45,10 @@ Each run writes `runs/<timestamp>.jsonl` (append-only, numbered lines) and `runs
 
 ## Try it without a key
 
+Run the demo page locally with `python -m web.app` (standard library only), then open http://127.0.0.1:8080. It shows the recorded run and lets you try the rule checks.
+
+Or from the command line:
+
 ```bash
 uv venv && uv pip install -r agent/requirements.txt pytest
 .venv/bin/python -m pytest -q agent/tests    # offline tests, fake Gemini client
@@ -85,3 +89,7 @@ More options are in [`agent/README.md`](agent/README.md).
 ## Credits
 
 Agent layer, checks, run logs, replay and tests: Yong Hwa Hong. The LungPair ranker, data pipeline and 3D viewer are by team Backprop to the Future (AgentVerse 2026, UCL, Biotech track).
+
+## Licence
+
+Apache-2.0 (see [`LICENSE`](LICENSE)). The LungPair ranker and data in the team repo have their own terms.
