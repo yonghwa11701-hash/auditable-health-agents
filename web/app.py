@@ -75,7 +75,7 @@ class Handler(BaseHTTPRequestHandler):
         elif path == "/recorded_run.jsonl":
             self._send(200, LOG_PATH.read_bytes(), "application/x-ndjson",
                        {"Content-Disposition": 'attachment; filename="recorded_run.jsonl"'})
-        elif path == "/healthz":
+        elif path == "/health":
             self._send(200, b"ok", "text/plain")
         else:
             self._json(404, {"error": "not found"})
