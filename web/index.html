@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Auditable Health Agents</title>
+<meta name="description" content="Inspect a recorded Gemini multi-agent run and try its rule checks. Preclinical research prototype.">
+<style>
+:root {
+  --bg: #f7f7f5; --surface: #ffffff; --text: #1b1b1a; --muted: #5f5e5a;
+  --border: #e3e2de; --accent: #1a5fb4; --pass: #1f7a3d; --pass-bg: #e6f4ea;
+  --fail: #b3261e; --fail-bg: #fce8e6; --warn: #8a5a00; --warn-bg: #fff4d6;
+  --code: #f1f0ec;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141413; --surface: #1d1d1b; --text: #ecebe6; --muted: #a8a7a0;
+    --border: #33322f; --accent: #8ab4f8; --pass: #81c995; --pass-bg: #1e3326;
+    --fail: #f28b82; --fail-bg: #3a1f1d; --warn: #fdd663; --warn-bg: #3a3218;
+    --code: #262624;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text);
+  font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+html, body { overflow-x: hidden; }
+main { max-width: 920px; min-width: 0; margin: 0 auto; padding: 32px 16px 64px; }
+a { color: var(--accent); }
+h1 { font-size: 1.75rem; line-height: 1.25; margin: 0 0 8px; }
+h2 { font-size: 1.25rem; margin: 40px 0 12px; }
+p { margin: 0 0 12px; }
+.lede { font-size: 1.1rem; color: var(--text); }
+.muted { color: var(--muted); }
+.note { background: var(--warn-bg); color: var(--warn); border-radius: 8px;
+  padding: 10px 14px; font-size: .95rem; margin: 16px 0; }
+.card { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 16px; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; }
+.stat b { display: block; font-size: 1.5rem; font-variant-numeric: tabular-nums; }
+.stat span { color: var(--muted); font-size: .9rem; }
+.flow { max-width: 100%; font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--code);
+  border-radius: 8px; padding: 12px 14px; overflow-x: auto; white-space: pre; }
+ol.timeline { list-style: none; padding: 0; margin: 0; }
+.ev { display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 10px; padding: 12px 0;
+  border-top: 1px solid var(--border); }
+.ev:first-child { border-top: 0; }
+.seq { color: var(--muted); font-variant-numeric: tabular-nums; font-size: .9rem; padding-top: 2px; }
+.kind { font-weight: 600; }
+.meta { color: var(--muted); font-size: .9rem; }
+.detail { font-size: .92rem; margin-top: 4px; overflow-wrap: anywhere; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.chip { font: 12px/1 ui-monospace, Menlo, monospace; padding: 5px 8px; border-radius: 999px; }
+.chip.pass { background: var(--pass-bg); color: var(--pass); }
+.chip.fail { background: var(--fail-bg); color: var(--fail); }
+details summary { cursor: pointer; color: var(--accent); font-size: .9rem; margin-top: 4px; }
+pre.raw { font: 12px/1.45 ui-monospace, Menlo, monospace; background: var(--code); border-radius: 6px;
+  padding: 10px; overflow-x: auto; max-height: 320px; white-space: pre-wrap; overflow-wrap: anywhere; }
+label { display: block; font-weight: 600; margin: 12px 0 6px; }
+textarea { width: 100%; min-height: 110px; padding: 10px; border-radius: 8px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--text); font: 14px/1.45 ui-monospace, Menlo, monospace; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; align-items: center; }
+button { font: inherit; padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--text); cursor: pointer; }
+button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+@media (prefers-color-scheme: dark) { button.primary { color: #10213d; } }
+.result { margin-top: 16px; }
+.gate { padding: 10px 0; border-top: 1px solid var(--border); }
+.gate:first-child { border-top: 0; }
+footer { margin-top: 48px; color: var(--muted); font-size: .9rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Auditable health agents</h1>
+  <p class="lede">For a lab scientist choosing the next drug combination to screen: three Gemini agents draft a cited shortlist, rule checks written in plain code verify it, and nothing goes ahead until a person approves. Every step is logged.</p>
+  <p class="muted">This page shows a real recorded run and lets you try the rule checks yourself. It makes no model calls and stores nothing you type.
+    Code: <a href="https://github.com/yonghwa11701-hash/auditable-health-agents">github.com/yonghwa11701-hash/auditable-health-agents</a></p>
+  <div class="note">Research prototype. Preclinical screening triage on public NCI-ALMANAC cell-line data. Not treatment advice and not a medical device.</div>
+
+  <h2>How a run works</h2>
+  <div class="flow">question
+ -> Orchestrator   gemini-4-argon          calls the ranking tools
+ -> Research       gemini-3.8-flash        parallel workers with Google Search grounding
+ -> Rule checks    plain Python            fixed checks that no model can override
+ -> Checker        gemini-3.5-flash-lite   second review, structured JSON
+ -> Human sign-off  only items that passed can be approved
+ -> Run log         one JSON line per model call, tool call, check and decision</div>
+
+  <h2>The recorded live run</h2>
+  <p class="muted" id="runline">Loading…</p>
+  <div class="card stats" id="stats"></div>
+  <div class="card" style="margin-top:12px">
+    <ol class="timeline" id="timeline"></ol>
+  </div>
+  <p class="muted" style="margin-top:8px"><a href="/recorded_run.jsonl">Download the raw run log (JSONL)</a></p>
+
+  <h2>Try the rule checks</h2>
+  <p>Paste text a model might write. The checks below are the same code the pipeline runs. Numbers are compared with the ranker output from the recorded run (the two candidate pairs: their scores, tiers, 95% intervals and NSC IDs).</p>
+  <div class="card">
+    <label for="text">Model text</label>
+    <textarea id="text" maxlength="8000"></textarea>
+    <label for="grounding">Sources the search returned (one URL per line)</label>
+    <textarea id="grounding" maxlength="8000" style="min-height:70px"></textarea>
+    <div class="row">
+      <button class="primary" id="run">Run checks</button>
+      <button data-ex="good">Example: passes</button>
+      <button data-ex="number">Example: invented number</button>
+      <button data-ex="advice">Example: treatment advice</button>
+      <button data-ex="cite">Example: ungrounded citation</button>
+    </div>
+    <div class="result" id="result" aria-live="polite"></div>
+  </div>
+
+  <footer>
+    <p>The agent layer, checks, run log and replay are by Yong Hwa Hong. The LungPair ranker is by team Backprop to the Future (AgentVerse 2026, UCL). Licence: Apache-2.0.</p>
+    <p>Limits: one live end-to-end run is recorded and everything else is tested offline. Passing the citation check shows a source was retrieved, not that it supports the sentence.</p>
+  </footer>
+</main>
+<script>
+const $ = (s) => document.querySelector(s);
+const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
+const chip = (name, ok) => el("span", "chip " + (ok ? "pass" : "fail"), (ok ? "PASS " : "FAIL ") + name);
+const short = (s, n = 220) => { s = String(s ?? "").replace(/\s+/g, " ").trim(); return s.length > n ? s.slice(0, n - 1) + "…" : s; };
+
+function describe(e) {
+  const d = { kind: e.kind, meta: "", detail: "", gates: null };
+  switch (e.kind) {
+    case "request": d.kind = "Question"; d.detail = e.question; break;
+    case "model_call": {
+      const u = e.usage || {}; const tok = (u.total_input_tokens || 0) + (u.total_output_tokens || 0);
+      d.kind = "Model call: " + e.agent; d.meta = `${e.model} · ${e.status} · ${tok.toLocaleString()} tokens` + (e.pair ? ` · ${e.pair}` : "");
+      const calls = (e.function_calls || []).map(f => `${f.name}(${JSON.stringify(f.arguments)})`);
+      d.detail = calls.length ? "Requests tool: " + calls.join(", ") : short(e.verdict ? JSON.stringify(e.verdict) : e.output);
+      if (e.grounding_urls) d.meta += ` · ${e.grounding_urls.length} grounding sources`;
+      break; }
+    case "tool_call": d.kind = "Tool call: " + e.tool; d.meta = JSON.stringify(e.args); d.detail = short(JSON.stringify(e.result_summary)); break;
+    case "gates": d.kind = "Rule checks: " + e.subject + (e.attempt ? ` (attempt ${e.attempt})` : ""); d.gates = e.gates || [];
+      if ("checker_ok" in e) d.meta = "checker model ok: " + e.checker_ok; break;
+    case "stage": d.kind = "Stage: " + e.stage; d.meta = Object.entries(e).filter(([k]) => !["seq","ts","run_id","mode","kind","stage"].includes(k)).map(([k,v]) => `${k}=${v}`).join(" · "); break;
+    case "stop": d.kind = "Stop: " + e.rule; d.detail = "Unfinished: " + (e.unfinished || []).join(", "); break;
+    case "human_decision": d.kind = "Human sign-off"; d.meta = "approver: " + e.approver;
+      d.detail = `Offered: ${(e.offered || []).join(", ")}. Approved: ${(e.approved || []).join(", ") || "none"}.` + (e.note ? ` Note: ${e.note}.` : ""); break;
+    case "report": { const p = ((e.report || {}).human_decision || {}).approved_pairs || [];
+      d.kind = "Report"; d.detail = "Approved for the next screening batch: " + (p.map(x => `${x.drug_a} + ${x.drug_b}`).join(", ") || "none"); break; }
+  }
+  return d;
+}
+
+async function loadRun() {
+  const r = await fetch("/api/run"); const { events } = await r.json();
+  const first = events[0];
+  $("#runline").textContent = `Run ${first.run_id}, recorded ${new Date(first.ts).toUTCString()}, mode=${first.mode}. Shown exactly as logged.`;
+  const models = events.filter(e => e.kind === "model_call");
+  const tokens = models.reduce((a, e) => a + ((e.usage || {}).total_input_tokens || 0) + ((e.usage || {}).total_output_tokens || 0), 0);
+  const gates = events.filter(e => e.kind === "gates").flatMap(e => e.gates || []);
+  const failed = gates.filter(g => !g.pass).length;
+  const dec = events.find(e => e.kind === "human_decision") || {};
+  const stats = [[events.length, "events logged"], [models.length, "model calls"], [tokens.toLocaleString(), "tokens"],
+    [`${gates.length - failed}/${gates.length}`, "rule checks passed"], [(dec.approved || []).length + " of " + (dec.offered || []).length, "pairs approved by a person"]];
+  for (const [v, l] of stats) { const s = el("div", "stat"); s.append(el("b", null, v), el("span", null, l)); $("#stats").append(s); }
+  for (const e of events) {
+    const d = describe(e); const li = el("li", "ev");
+    li.append(el("div", "seq", e.seq));
+    const body = el("div"); body.append(el("div", "kind", d.kind));
+    if (d.meta) body.append(el("div", "meta", d.meta));
+    if (d.detail) body.append(el("div", "detail", d.detail));
+    if (d.gates) { const c = el("div", "chips"); d.gates.forEach(g => c.append(chip(g.gate, g.pass))); body.append(c); }
+    const det = el("details"); det.append(el("summary", null, "Raw event"), el("pre", "raw", JSON.stringify(e, null, 2)));
+    body.append(det); li.append(body); $("#timeline").append(li);
+  }
+}
+
+const EXAMPLES = {
+  good: ["Docetaxel + Gefitinib ranks first (tier 1, score 162.3, 95% interval 127.3 to 197.3) in the preclinical NCI-ALMANAC panel. Suggested for the next cell-line screen.", ""],
+  number: ["Docetaxel + Gefitinib has a score of 999 and a 99% response rate in cell lines.", ""],
+  advice: ["Patients with EGFR-mutant NSCLC should take docetaxel with gefitinib; it improves survival.", ""],
+  cite: ["Prior work supports this pair (https://example.org/paper; doi:10.1000/abc12).",
+         "https://example.org/paper-other\nhttps://doi.org/10.1000/abc123"],
+};
+document.querySelectorAll("button[data-ex]").forEach(b => b.addEventListener("click", () => {
+  const [t, g] = EXAMPLES[b.dataset.ex]; $("#text").value = t; $("#grounding").value = g; runChecks();
+}));
+
+const GATE_HELP = {
+  no_clinical_claim: "No treatment-advice or patient-benefit wording.",
+  synthetic_labelled: "Any mention of simulation also says \"synthetic\".",
+  numbers_from_tools: "Every decimal, percentage and integer of 10 or more appears in the ranker output.",
+  citations_grounded: "Every PMID, DOI or URL exactly matches a source the search returned.",
+};
+async function runChecks() {
+  const out = $("#result"); out.textContent = "Checking…";
+  try {
+    const r = await fetch("/api/check", { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text: $("#text").value, grounding: $("#grounding").value }) });
+    const data = await r.json(); out.textContent = "";
+    if (!r.ok) { out.textContent = data.error || "Error"; return; }
+    out.append(el("p", "kind", data.all_pass ? "All checks pass. This text could be offered for human sign-off." : "Blocked. At least one check failed, so this text could not be approved."));
+    for (const g of data.gates) {
+      const row = el("div", "gate"); row.append(chip(g.gate, g.pass), el("div", "meta", GATE_HELP[g.gate] || ""));
+      const d = g.detail || {}; let why = "";
+      if (g.gate === "numbers_from_tools" && d.not_in_tool_output?.length) why = "Not in tool output: " + d.not_in_tool_output.join(", ");
+      if (g.gate === "no_clinical_claim" && d.matched?.length) why = "Matched: " + d.matched.join(", ");
+      if (g.gate === "citations_grounded" && d.not_grounded?.length) why = "Not grounded: " + d.not_grounded.join(", ");
+      if (g.gate === "synthetic_labelled" && !g.pass) why = "Mentions simulation without saying \"synthetic\".";
+      if (why) row.append(el("div", "detail", why));
+      out.append(row);
+    }
+  } catch (err) { out.textContent = "Could not reach the checker."; }
+}
+$("#run").addEventListener("click", runChecks);
+loadRun();
+</script>
+</body>
+</html>

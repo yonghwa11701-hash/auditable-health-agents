@@ -13,3 +13,4 @@ jobs:
       - run: pip install -r agent/requirements.txt pytest
       - run: python -m pytest -q agent/tests
       - run: python -m agent.replay > /dev/null
+      - run: docker build -t demo . && docker run -d -p 8080:8080 -e K_SERVICE=ci --name demo demo && sleep 3 && curl -fsS localhost:8080/healthz
