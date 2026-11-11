@@ -1,5 +1,7 @@
 # auditable-health-agents
 
+[![tests](https://github.com/yonghwa11701-hash/auditable-health-agents/actions/workflows/tests.yml/badge.svg)](https://github.com/yonghwa11701-hash/auditable-health-agents/actions/workflows/tests.yml)
+
 **For a lab scientist choosing the next drug combination to screen, this tool gives a short, cited shortlist. Every step is logged, and nothing goes ahead until a person approves it.**
 
 It's built on Google Gemini. The same pattern fits any health-AI workflow where you need to show, afterwards, what each AI agent did, which sources it used, which rules it passed and who signed off.
