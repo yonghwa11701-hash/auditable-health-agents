@@ -164,7 +164,7 @@ def all_pass(gates: list[dict]) -> bool:
 
 
 # --- Scope: drugs the question names that the ranker does not know ----------
-# Plain Python, no model. A judge asking about a drug outside the 105-drug
+# Plain Python, no model. A user asking about a drug outside the 105-drug
 # NCI-ALMANAC panel (e.g. pembrolizumab) must get an explicit refusal for that
 # drug, not a silent answer about the other drug only.
 _DRUG_SUFFIX = re.compile(
@@ -179,7 +179,7 @@ _KNOWN_OUTSIDE_PANEL = {  # common lung-cancer drugs not in NCI-ALMANAC
 }
 
 
-# Brand names a judge may type (brand -> generic). Generic is then checked
+# Brand names a user may type (brand -> generic). Generic is then checked
 # against the panel like any other name.
 BRANDS = {
     "keytruda": "pembrolizumab", "opdivo": "nivolumab", "tecentriq": "atezolizumab",
