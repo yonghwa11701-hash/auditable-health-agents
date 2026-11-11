@@ -159,6 +159,8 @@ def run_pipeline(question: str, tools: LungPairTools, log: RunLog, client=None,
         report["orchestrator"] = None
         log.write("gates", subject="ranking", gates=[g_tier])
     report["tier4_gate"] = g_tier
+    summary_checks_passed = report.get("orchestrator") is None or \
+        report["orchestrator"]["status"] == "passed"
 
     # 3. Research + checks per candidate, in parallel ----------------------
     def _one(c):
@@ -235,6 +237,7 @@ def run_pipeline(question: str, tools: LungPairTools, log: RunLog, client=None,
     decision = approve(candidates) if approve else {"approved": [], "approver": None,
                                                     "note": "no approval step run"}
     approved = [c for i, c in enumerate(candidates, 1) if i in decision.get("approved", [])
+                and summary_checks_passed
                 and (client is None or (c.get("evidence") or {}).get("status") == "passed")]
     unpassed_attempted = [f'{c["drug_a"]}+{c["drug_b"]}' for i, c in enumerate(candidates, 1)
                           if i in decision.get("approved", [])

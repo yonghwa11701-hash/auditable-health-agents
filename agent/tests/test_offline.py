@@ -178,6 +178,7 @@ def test_orchestrator_invented_number_is_flagged(log):
     rep = run(fake, log, top_k=1)
     assert rep["orchestrator"]["status"] == "flagged"
     assert any(g["gate"] == "numbers_from_tools" and not g["pass"] for g in rep["orchestrator"]["gates"])
+    assert rep["human_decision"]["approved_pairs"] == []
 
 
 def test_checker_model_cannot_override_gate(log):
@@ -285,7 +286,40 @@ def test_interactive_approve_with_drug_names_and_numbers():
 
 
 def test_replay_run_offline():
-    from agent.replay import replay_run
-    rc = replay_run(top_k=2, approve_preset="Docetaxel + Gefitinib", delay=0.0)
-    assert rc == 0
+    """Replay prints only recorded events, including the recorded decision."""
+    import io, json
+    from agent.replay import replay_run, RECORDED_LOG
+    buf = io.StringIO()
+    assert replay_run(delay=0.0, out=buf) == 0
+    out = buf.getvalue()
+    tools = {json.loads(l)["tool"] for l in RECORDED_LOG.read_text().splitlines()
+             if json.loads(l).get("kind") == "tool_call"}
+    assert tools == {"resolve_drugs", "rank_partners"}
+    assert "get_chembl_mechanism" not in out          # nothing added beyond the log
+    assert "citations_grounded: FAIL" in out          # recorded failures are shown
+    assert "approved: ['Docetaxel+Gefitinib']" in out  # recorded decision, not a new one
 
+
+
+# --- Regression tests for check edge cases (external review, 11 Nov 2026) ---
+def test_numbers_gate_catches_integers_and_percentages():
+    from agent.checks import numbers_from_tools
+    tools = [{"result": {"ranked": [{"score": 162.3, "nsc_a": 628503,
+                                     "expected_precision_at_20": 0.89}]}}]
+    assert not numbers_from_tools("Score 999 for this pair.", tools)["pass"]
+    assert not numbers_from_tools("Response rate 99%.", tools)["pass"]
+    assert not numbers_from_tools("Precision 0.34 at 20.", tools)["pass"]   # not in tool output
+    ok = numbers_from_tools("Docetaxel (NSC 628503): score 162.3, 95% interval shown; "
+                            "precision 0.89 (89%); top 3 pairs.", tools)
+    assert ok["pass"], ok
+
+
+def test_citation_gate_requires_exact_url_and_identifier():
+    from agent.checks import citations_grounded
+    g = [{"url": "https://example.org/paper-other"}]
+    assert not citations_grounded("See https://example.org/paper", g)["pass"]
+    g = [{"url": "https://www.example.org/paper/?utm_source=x#s2"}]
+    assert citations_grounded("See https://example.org/paper", g)["pass"]
+    g = [{"url": "https://doi.org/10.1000/abc123"}]
+    assert not citations_grounded("doi:10.1000/abc12", g)["pass"]
+    assert citations_grounded("doi:10.1000/abc123", g)["pass"]

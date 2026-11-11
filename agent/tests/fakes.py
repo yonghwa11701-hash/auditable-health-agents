@@ -10,7 +10,7 @@ DRUGS = [{"nsc": 715055, "name": "Gefitinib"}, {"nsc": 628503, "name": "Docetaxe
 
 
 class FakeApi:
-    """Stands in for Duncan's API. Returns fixed, API-shaped JSON."""
+    """Stands in for the ranker API. Returns fixed, API-shaped JSON."""
     def __init__(self):
         self.calls = []
 

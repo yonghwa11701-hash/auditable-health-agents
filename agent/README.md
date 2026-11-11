@@ -42,11 +42,11 @@ never compute a number, and a gate checks that.
 
 | Gate | Passes only if |
 |---|---|
-| `citations_grounded` | every PMID, DOI and URL the research agent wrote appears in the grounding metadata returned by the API (`url_citation` annotations, `url_context_result` URLs; Google redirect links are resolved by reading their `Location` header). Optional extra: an NCBI E-utilities lookup reports whether an ungrounded PMID exists and whether its title names a drug of the pair; that is reported, but the citation still counts as not grounded. |
+| `citations_grounded` | every PMID, DOI and URL the research agent wrote exactly matches (after normalising URLs) an identifier in the grounding metadata returned by the API (`url_citation` annotations, `url_context_result` URLs; Google redirect links are resolved by reading their `Location` header). Optional extra: an NCBI E-utilities lookup reports whether an ungrounded PMID exists and whether its title names a drug of the pair; that is reported, but the citation still counts as not grounded. |
 | `tier4_refused` | no tier-4 (withheld) pair is ranked, researched or offered for approval |
 | `no_clinical_claim` | no treatment-advice wording anywhere, and no patient-benefit wording in our own summary |
 | `synthetic_labelled` | any mention of simulation also says "synthetic" |
-| `numbers_from_tools` | every decimal number in the orchestrator's summary exists in the ranker's JSON |
+| `numbers_from_tools` | every decimal, percentage and integer ≥ 10 in the orchestrator's summary exists in the ranker's JSON |
 
 The checker model adds a second, semantic review. A checker "pass" never
 cancels a gate "fail".
@@ -62,14 +62,15 @@ Key-shaped strings are redacted before writing.
 ## Run it
 
 ```bash
-pip install -r backend/requirements.txt -r agent/requirements.txt
-cd backend && python api.py            # terminal 1, http://127.0.0.1:8000
+pip install -r agent/requirements.txt
+# ranker: see the main README (team repo, commit 3532b3c), then
+cd lungpair/backend && python api.py   # terminal 1, http://127.0.0.1:8000
 export GEMINI_API_KEY=...              # terminal 2; never write it into a file
 python -m agent.run "Which partner should a lab screen with gefitinib next?"
 ```
 
 Options: `--approve 1,3` (non-interactive sign-off), `--approver NAME`,
-`--top-k 3`, `--api inprocess` (no server: imports `backend/api.py`),
+`--top-k 3`, `--api inprocess` (no server: imports `api.py` from `LUNGPAIR_BACKEND_DIR`),
 `--no-pubmed-check`, and `--no-llm` (ranking + sign-off only, no Gemini call;
 clearly labelled `mode=no-llm` in the output and receipt; useful offline).
 
