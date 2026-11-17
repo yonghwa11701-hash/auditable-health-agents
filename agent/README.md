@@ -1,7 +1,7 @@
 # LungPair agent pipeline (Google Gemini)
 
 A multi-step, multi-agent layer on top of the LungPair ranker (`backend/api.py`,
-in the [team repo](https://github.com/leventkoymen/backprop-to-the-future-b56f8f5e-submission-repo); not included here).
+in [LungPair](https://github.com/yonghwa11701-hash/lungpair-agentverse-2026), a copy of the team repo; not included here).
 A researcher types a question; three Gemini agents and plain-Python checks turn
 it into a short, cited, human-approved screening batch.
 
@@ -63,7 +63,7 @@ Key-shaped strings are redacted before writing.
 
 ```bash
 pip install -r agent/requirements.txt
-# ranker: see the main README (team repo, commit 3532b3c), then
+# ranker: see the main README (LungPair repo, commit 3532b3c), then
 cd lungpair/backend && python api.py   # terminal 1, http://127.0.0.1:8000
 export GEMINI_API_KEY=...              # terminal 2; never write it into a file
 python -m agent.run "Which partner should a lab screen with gefitinib next?"

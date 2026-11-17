@@ -61,10 +61,10 @@ The replay prints only what the log recorded, including the citation check that 
 
 ### Live run
 
-A live run also needs the LungPair ranker from the [team repo](https://github.com/leventkoymen/backprop-to-the-future-b56f8f5e-submission-repo), pinned to commit `3532b3c`, and a Gemini API key set in your shell. Never put the key in a file.
+A live run also needs the LungPair ranker from [LungPair](https://github.com/yonghwa11701-hash/lungpair-agentverse-2026) (a copy of the team's [AgentVerse submission](https://github.com/leventkoymen/backprop-to-the-future-b56f8f5e-submission-repo)), pinned to commit `3532b3c`, and a Gemini API key set in your shell. Never put the key in a file.
 
 ```bash
-git clone https://github.com/leventkoymen/backprop-to-the-future-b56f8f5e-submission-repo lungpair
+git clone https://github.com/yonghwa11701-hash/lungpair-agentverse-2026 lungpair
 git -C lungpair checkout 3532b3c
 uv pip install -r lungpair/requirements.txt
 (cd lungpair/backend && python api.py)       # terminal 1: ranker on http://127.0.0.1:8000
