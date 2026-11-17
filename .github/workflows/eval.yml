@@ -1,0 +1,55 @@
+name: eval
+# Weekly evaluation. The offline part always runs. The live part runs only if
+# the repo has a GEMINI_API_KEY secret; it uses the LungPair ranker pinned to
+# commit 3532b3c and keeps the results file as a build artifact, so runs can
+# be compared over time (model versions change underneath).
+on:
+  schedule:
+    - cron: "0 6 * * 1"   # Mondays 06:00 UTC
+  workflow_dispatch:
+jobs:
+  offline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r agent/requirements.txt
+      - run: python -m eval.run_eval --save
+      - uses: actions/upload-artifact@v4
+        with:
+          name: eval-offline
+          path: eval/results/
+  live:
+    runs-on: ubuntu-latest
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+        if: env.GEMINI_API_KEY != ''
+      - uses: actions/checkout@v4
+        if: env.GEMINI_API_KEY != ''
+        with:
+          repository: yonghwa11701-hash/lungpair-agentverse-2026
+          ref: 3532b3c
+          path: lungpair
+      - uses: actions/setup-python@v5
+        if: env.GEMINI_API_KEY != ''
+        with:
+          python-version: "3.12"
+      - if: env.GEMINI_API_KEY != ''
+        run: pip install -r agent/requirements.txt -r lungpair/requirements.txt
+      - if: env.GEMINI_API_KEY != ''
+        run: python -m eval.run_eval --live --api inprocess --save
+        env:
+          LUNGPAIR_BACKEND_DIR: ${{ github.workspace }}/lungpair/backend
+      - uses: actions/upload-artifact@v4
+        if: env.GEMINI_API_KEY != ''
+        with:
+          name: eval-live
+          path: |
+            eval/results/
+            runs/
+      - if: env.GEMINI_API_KEY == ''
+        run: echo "No GEMINI_API_KEY secret, so the live evaluation was skipped."
