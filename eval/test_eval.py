@@ -35,3 +35,8 @@ def test_live_bookkeeping_with_fake_model(tmp_path):
     assert r["checks"]["approval_only_passed"]
     assert r["model_calls"] > 0 and r["tokens"] > 0
     assert r["checker_vs_rules_disagree"]
+
+
+def test_num_runs_aggregates():
+    g = run_eval.run_golden(live=False, api=None, num_runs=2)
+    assert all(x["pass_fraction"] == 1.0 and len(x["runs"]) == 2 for x in g)

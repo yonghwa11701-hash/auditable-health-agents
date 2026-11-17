@@ -11,8 +11,9 @@ Three parts, each with a fixed file of cases:
   golden     eval/golden.jsonl          About 10 fixed questions with the
              expected behaviour: refuse or not, drugs out of scope, which
              ranker tools are called and in what order (scored EXACT /
-             IN_ORDER / ANY_ORDER, the same idea as ADK's tool trajectory
-             score), and that only passed pairs can be approved.
+             IN_ORDER / ANY_ORDER, as in ADK's tool_trajectory_avg_score;
+             here tool names only, with the anchor drug checked separately,
+             whereas ADK also compares arguments unless told to ignore them), and that only passed pairs can be approved.
   live       same golden questions, run against real Gemini and the real
              ranker. Adds tokens, cost, time, research status and how often
              the checker model and the plain-Python checks disagree. Saves
@@ -20,6 +21,7 @@ Three parts, each with a fixed file of cases:
 
     python -m eval.run_eval                       # verifier + golden, offline (no key)
     python -m eval.run_eval --live --api inprocess --save   # needs GEMINI_API_KEY + ranker
+    python -m eval.run_eval --live --api inprocess --num-runs 3 --save   # variance
 
 Offline mode uses the fake ranker in agent/tests/fakes.py and no model: it
 tests the checks and the code path, not Gemini's quality.
@@ -155,14 +157,14 @@ def run_one(case: dict, tools: LungPairTools, client, runs_dir: str, mode: str) 
                 if r["kind"] == "gates" and str(r.get("subject", "")).startswith("research")
                 and "checker_ok" in r and checks.all_pass(r["gates"]) != r["checker_ok"]]
     return {"id": case["id"], "question": case["question"], "pass": all(res.values()),
-            "checks": res, "trajectory": traj, "ranking_source": rep.get("ranking_source"),
+            "checks": res, "trajectory": traj, "tool_calls": len(traj), "ranking_source": rep.get("ranking_source"),
             "orchestrator_status": (rep.get("orchestrator") or {}).get("status"),
             "evidence_status": [(c.get("evidence") or {}).get("status") for c in rep.get("candidates", [])],
             "model_calls": len(calls), "tokens": tokens, "est_cost_usd": round(cost, 4),
             "seconds": secs, "checker_vs_rules_disagree": disagree, "receipt": log.path}
 
 
-def run_golden(live: bool, api: str | None) -> list[dict]:
+def run_golden(live: bool, api: str | None, num_runs: int = 1) -> list[dict]:
     if live:
         from agent.gemini import make_client
         from agent.tools import make_api
@@ -172,8 +174,19 @@ def run_golden(live: bool, api: str | None) -> list[dict]:
         client, new_api, mode = None, FakeApi, "eval-offline"
     runs_dir = config.RUNS_DIR if live else tempfile.mkdtemp(prefix="eval-runs-")
     shared = new_api() if live else None                # the real ranker fits its model once
-    return [run_one(c, LungPairTools(shared or new_api()), client, runs_dir, mode)
-            for c in _load("golden.jsonl")]
+    out = []
+    for c in _load("golden.jsonl"):
+        runs = [run_one(c, LungPairTools(shared or new_api()), client, runs_dir, mode)
+                for _ in range(num_runs)]
+        r = dict(runs[0])
+        if num_runs > 1:                                 # models vary run to run
+            r["runs"] = runs
+            r["pass_fraction"] = round(sum(x["pass"] for x in runs) / num_runs, 3)
+            r["pass"] = all(x["pass"] for x in runs)
+            for k in ("tokens", "model_calls", "tool_calls", "seconds", "est_cost_usd"):
+                r[k] = round(sum(x[k] for x in runs) / num_runs, 4)   # mean per run
+        out.append(r)
+    return out
 
 
 # --------------------------------------------------------------------------- #
@@ -181,6 +194,8 @@ def _summary(golden: list[dict]) -> dict:
     n = len(golden) or 1
     return {"questions": len(golden), "pass_rate": round(sum(g["pass"] for g in golden) / n, 3),
             "trajectory_ok": sum(g["checks"].get("trajectory", True) for g in golden),
+            "tool_calls": sum(g["tool_calls"] for g in golden),
+            "model_calls": sum(g["model_calls"] for g in golden),
             "tokens": sum(g["tokens"] for g in golden),
             "est_cost_usd": round(sum(g["est_cost_usd"] for g in golden), 4),
             "seconds": round(sum(g["seconds"] for g in golden), 1),
@@ -199,6 +214,8 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="python -m eval.run_eval")
     ap.add_argument("--live", action="store_true", help="real Gemini + real ranker (needs GEMINI_API_KEY)")
     ap.add_argument("--api", default=None, help="ranker: http://127.0.0.1:8000 (default) or inprocess")
+    ap.add_argument("--num-runs", type=int, default=1,
+                    help="repeat each question N times (live: shows run-to-run variance)")
     ap.add_argument("--save", action="store_true", help="write eval/results/<time>-<mode>.json and compare with the last one")
     a = ap.parse_args(argv)
     mode = "live" if a.live else "offline"
@@ -213,11 +230,12 @@ def main(argv=None) -> int:
         if c["known_limit"]:
             print(f'  - {c["id"]} [{c["result"]}]: {c["known_limit"]}')
 
-    golden = run_golden(a.live, a.api)
+    golden = run_golden(a.live, a.api, a.num_runs)
     print(f"\nGOLDEN QUESTIONS ({mode}{'' if a.live else ': fake ranker, no model'})")
     for g in golden:
         bad = [k for k, ok in g["checks"].items() if not ok]
-        print(f'  {"PASS" if g["pass"] else "FAIL"}  {g["id"]:28} tools={g["trajectory"] or "-"}'
+        frac = f' ({g["pass_fraction"]:.0%} of {a.num_runs} runs)' if "pass_fraction" in g else ""
+        print(f'  {"PASS" if g["pass"] else "FAIL"}{frac}  {g["id"]:28} tools={g["trajectory"] or "-"}'
               f'{"  failed: " + ", ".join(bad) if bad else ""}')
     s = _summary(golden)
     print("\nsummary:", json.dumps(s))
@@ -229,7 +247,7 @@ def main(argv=None) -> int:
         out = {"when_utc": stamp, "mode": mode,
                "models": {"orchestrator": config.ORCHESTRATOR_MODEL, "research": config.RESEARCH_MODEL,
                           "checker": config.CHECKER_MODEL} if a.live else None,
-               "summary": s, "verifier": v, "golden": golden}
+               "num_runs": a.num_runs, "summary": s, "verifier": v, "golden": golden}
         path = os.path.join(RESULTS, f"{stamp}-{mode}.json")
         with open(path, "w", encoding="utf-8") as f:
             json.dump(out, f, indent=1, default=str)

@@ -76,17 +76,17 @@ More options are in [`agent/README.md`](agent/README.md).
 
 ## Evaluation
 
-`python -m eval.run_eval` runs a fixed evaluation in about 10 seconds, with no key needed. It has three parts:
+`python -m eval.run_eval` runs a fixed evaluation in under a second, with no key needed. It has three parts:
 
 1. **The checks against known answers.** [`eval/verifier_cases.jsonl`](eval/verifier_cases.jsonl) holds 36 short texts, each labelled good or bad: planted fake PMIDs, invented scores and percentages, treatment advice, patient questions, prompt injection, out-of-panel drugs. For each check, the eval prints how many bad texts it catches and how many good texts it wrongly flags.
 2. **The known misses, listed and not hidden.** The checks are pattern-based, so the case file keeps 10 texts they get wrong on purpose. Examples: a number written in words, "3-fold", a benefit claim in other words, "aunt" instead of "mum", a paraphrased injection. If a check changes and one of these starts behaving differently, the build fails until the file is updated. The first run found a new false alarm: "precision at 20" flags the 20.
 3. **Ten golden questions** in [`eval/golden.jsonl`](eval/golden.jsonl). For each question it checks:
    - refuse or not;
    - which drugs are out of scope;
-   - which ranker tools were called and in what order (exact, in order, or any order, the same idea as the tool-trajectory score in Agent Development Kit evaluation);
+   - which ranker tools were called and in what order, scored exact / in order / any order as in Agent Development Kit's `tool_trajectory_avg_score` (tool names only here, plus a separate check of the drug asked about; ADK also compares the arguments by default);
    - that nothing is approved unless its evidence passed.
 
-`--live --api inprocess --save` runs the same questions against Gemini and the real ranker. It records tokens, estimated cost, time, research status and how often the checker model disagrees with the plain-Python checks. It saves a results file and prints the change since the last saved run, including any change of model version. The [`eval`](.github/workflows/eval.yml) workflow runs every Monday. Its live part runs only when a `GEMINI_API_KEY` secret is set.
+`--live --api inprocess --save` runs the same questions against Gemini and the real ranker. `--num-runs 3` repeats each question to show run-to-run variance. It records tool calls, model calls, tokens, estimated cost, time, research status and how often the checker model disagrees with the plain-Python checks. It saves a results file and prints the change since the last saved run, including any change of model version. The [`eval`](.github/workflows/eval.yml) workflow runs every Monday. Its live part runs only when a `GEMINI_API_KEY` secret is set.
 
 ## Limits
 
